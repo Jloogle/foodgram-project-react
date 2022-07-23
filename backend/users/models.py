@@ -1,37 +1,32 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+
+from .manager import CustomUserManager
 
 
-class User(AbstractBaseUser):
-    password = models.CharField(
-        max_length=55,
-        blank=False,
-        verbose_name='Пароль'
-    )
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    password = models.CharField('Пароль', max_length=150, blank=False)
     username = models.CharField(
-        max_length=75,
+        'Логин',
+        max_length=150,
         unique=True,
-        blank=False,
-        verbose_name='Логин'
+        blank=False
     )
     email = models.EmailField(
-        max_length=90,
+        'Почта',
+        max_length=255,
         unique=True,
-        blank=False,
-        verbose_name='Почта'
+        blank=False
     )
-    first_name = models.CharField(
-        max_length=55,
-        blank=False,
-        verbose_name='Имя'
-    )
-    last_name = models.CharField(
-        max_length=55,
-        blank=False,
-        verbose_name='Фамилия'
-    )
-    is_administrator = models.BooleanField('Администратор', default=False)
+    first_name = models.CharField('Имя', max_length=150, blank=False)
+    last_name = models.CharField('Фамилия', max_length=150, blank=False)
+    is_superuser = models.BooleanField('Администратор', default=False)
     is_blocked = models.BooleanField('Блокировка', default=False)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
+    objects = CustomUserManager()
 
     class Meta:
         ordering = ['-id']
@@ -42,8 +37,8 @@ class User(AbstractBaseUser):
         return self.username
 
     @property
-    def is_admin(self):
-        return self.is_administrator
+    def is_staff(self):
+        return self.is_superuser
 
     @property
     def is_block(self):
@@ -52,14 +47,14 @@ class User(AbstractBaseUser):
 
 class Follow(models.Model):
     author = models.ForeignKey(
-        User,
+        CustomUser,
         on_delete=models.CASCADE,
         related_name='following',
         verbose_name='Автор',
         null=True
     )
     user = models.ForeignKey(
-        User,
+        CustomUser,
         on_delete=models.CASCADE,
         related_name='follower',
         verbose_name='Подписчик',
