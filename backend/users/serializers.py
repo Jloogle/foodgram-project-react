@@ -22,7 +22,7 @@ class CustomUserSerializer(UserSerializer, SubscribeMixin):
 
     class Meta:
         model = User
-        fields = ('password', 'username', 'first_name', 'id',
+        fields = ('username', 'first_name', 'id',
                   'last_name', 'email', 'is_subscribed', )
 
 
@@ -32,24 +32,6 @@ class SubscriptionSerializer(CustomUserSerializer):
 
     class Meta(CustomUserSerializer.Meta):
         fields = CustomUserSerializer.Meta.fields + ('recipes_count',)
-
-    def validate(self, data):
-        author = data['following']
-        user = data['follower']
-        if user == author:
-            raise serializers.ValidationError(
-                'Вы не можете подписаться на самого себя!'
-            )
-        if Follow.objects.filter(author=author, user=user).exists():
-            raise serializers.ValidationError(
-                'Вы не можете оформить подписку повторно'
-            )
-        return data
-
-    def create(self, **validated_data):
-        subscribe = Follow.objects.create(**validated_data)
-        subscribe.save()
-        return subscribe
 
     # def get_recipes(self):
     #     pass
