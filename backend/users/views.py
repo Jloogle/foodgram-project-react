@@ -76,7 +76,6 @@ class CustomUserViewSet(UserViewSet):
         methods=['POST', 'DELETE'],
         detail=True,
         permission_classes=(IsAuthenticated,),
-        serializer_class=SubscriptionSerializer
     )
     def subscribe(self, request, id=None):
         try:
