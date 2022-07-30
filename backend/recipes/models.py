@@ -1,3 +1,4 @@
+from django.core import validators
 from django.db import models
 
 from users.models import CustomUser
@@ -16,7 +17,7 @@ class Tag(models.Model):
         blank=False,
         unique=True
     )
-    color = models.CharField('Цвет тега в HEX', max_length=7)
+    color = models.CharField('Цвет тега в HEX', max_length=7, default='#ffffff')
 
     class Meta:
         verbose_name = 'Тег'
@@ -32,7 +33,6 @@ class Ingredient(models.Model):
         max_length=100,
         blank=False
     )
-    count = models.PositiveIntegerField()
     measurement_unit = models.CharField(
         'Единица измерения',
         max_length=100,
@@ -49,6 +49,9 @@ class Ingredient(models.Model):
             )
         ]
 
+    def __str__(self):
+        return self.name
+
 
 class Recipe(models.Model):
     author = models.ForeignKey(
@@ -58,7 +61,7 @@ class Recipe(models.Model):
         related_name='recipes',
         db_index=True
     )
-    title = models.CharField(
+    name = models.CharField(
         'Название рецепта',
         max_length=250,
         blank=False
@@ -68,7 +71,7 @@ class Recipe(models.Model):
         upload_to='recipes/',
         blank=True,
     )
-    description = models.TextField(
+    text = models.TextField(
         'Описание',
         help_text='Введите описания рецепта',
         blank=False
@@ -77,15 +80,100 @@ class Recipe(models.Model):
         'Время приготовления',
         blank=False
     )
-    tag = models.ManyToManyField(
+    tags = models.ManyToManyField(
         Tag,
-        related_name='recipe',
+        related_name='recipes',
         db_index=True,
         verbose_name='Тег'
     )
-
+    ingredients = models.ManyToManyField(
+        Ingredient,
+        through='RecipeIngredient',
+        related_name='recipes',
+        verbose_name='Ингредиенты'
+    )
 
     class Meta:
         ordering = ['-pk']
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
+
+    def __str__(self):
+        return self.name
+
+
+class Favorite(models.Model):
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь',
+        related_name='favorite'
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        verbose_name='Рецепт',
+        related_name='favorite'
+    )
+
+    class Meta:
+        verbose_name = 'Избранное',
+        verbose_name_plural = 'Избранное'
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'recipe'],
+                                    name='unique_favorites')
+        ]
+
+
+class RecipeIngredient(models.Model):
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='recipe_ingredient'
+    )
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        related_name='ingredient_recipe'
+    )
+    amount = models.PositiveSmallIntegerField(
+        validators=(
+            validators.MinValueValidator(
+                1,
+                message='Количество ингредиентов должно быть не меньше 1'
+            ),
+        ),
+        verbose_name='Количество'
+    )
+
+    class Meta:
+        verbose_name = 'Ингредиент рецепта'
+        verbose_name_plural = 'Ингредиенты рецепта'
+        constraints = [
+            models.UniqueConstraint(fields=['recipe', 'ingredient'],
+                                    name='unique_ingredient')
+        ]
+
+    def __str__(self):
+        return f'Ингредиент :{self.ingredient.name} рецепта: {self.recipe} '
+
+
+class ShoppingCart(models.Model):
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='shopping_cart'
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='shopping_cart'
+    )
+
+    class Meta:
+        verbose_name = 'Корзина'
+        verbose_name_plural = 'Корзины'
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'recipe'],
+                                    name='unique_shopping_cart')
+        ]
