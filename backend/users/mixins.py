@@ -1,12 +1,9 @@
-from rest_framework import serializers
+from .models import Follow
 
 
-class SubscribeMixin(serializers.Serializer):
-    is_subscribed = serializers.SerializerMethodField(read_only=True)
-
+class SubscribeMixin:
     def get_is_subscribed(self, obj):
         user = self.context['request'].user
-        return (
-                user.is_authenticated
-                and obj.following.filter(user=user).exists()
-        )
+        if user.is_anonymous:
+            return False
+        return Follow.objects.filter(user=user, author=obj.id).exists()
