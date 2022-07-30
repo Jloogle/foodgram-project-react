@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import environ
@@ -6,6 +7,7 @@ import environ
 env = environ.Env(
     SECRET_KEY=(str, '*'),
     ALLOWED_HOSTS=(list, []),
+    DB_ENGINE=str,
     DB_NAME=str,
     POSTGRES_USER=str,
     POSTGRES_PASSWORD=str,
@@ -70,21 +72,14 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'mydatabase',
+        'ENGINE': env('DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': env('DB_NAME', default='postgres'),
+        'USER': env('POSTGRES_USER', default='postgres'),
+        'PASSWORD': env('POSTGRES_PASSWORD', default='postgres'),
+        'HOST': env('DB_HOST', default='db'),
+        'PORT': env('DB_PORT', default='5432'),
     }
 }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': env('DB_NAME'),
-#         'USER': env('POSTGRES_USER'),
-#         'PASSWORD': env('POSTGRES_PASSWORD'),
-#         'HOST': env('DB_HOST'),
-#         'PORT': env('DB_PORT'),
-#     }
-# }
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -112,9 +107,11 @@ USE_I18N = True
 USE_TZ = True
 
 
-STATIC_URL = 'static/'
+STATIC_URL = 'backend_static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'backend_static')
 
 MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
