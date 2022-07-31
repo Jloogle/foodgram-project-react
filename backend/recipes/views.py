@@ -9,6 +9,7 @@ from .models import Tag, Recipe, Favorite, Ingredient, ShoppingCart
 from .serializers import TagSerializer, IngredientSerializer, RecipeGetSerializer, RecipeCreateSerializer, FavoriteSerializer, ShoppingCartSerializer
 from .permissions import AuthorOrReadOnly, AdminOrReadOnly
 from .filters import IngredientSearchFilter, RecipeFilter
+from foodgram.pagination import LimitPageNumberPaginator
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -29,9 +30,10 @@ class IngredientViewSet(viewsets.ModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (AuthorOrReadOnly,)
-    default_serializer_class = RecipeGetSerializer
+    default_serializer_class = RecipeCreateSerializer
     filter_backends = (DjangoFilterBackend,)
-    filter_class = RecipeFilter
+    filterset_class = RecipeFilter
+    pagination_class = LimitPageNumberPaginator
 
     def get_serializer_class(self):
         if self.request.method in ('GET',):
