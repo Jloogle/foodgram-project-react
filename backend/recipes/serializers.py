@@ -10,9 +10,12 @@ from users.mixins import SubscribeMixin
 
 
 class TagSerializer(serializers.ModelSerializer):
+    slug = serializers.SlugField()
+
     class Meta:
         model = Tag
         fields = ('id', 'name', 'color', 'slug')
+        lookup_field = 'slug'
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -91,6 +94,9 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             )
         return value
 
+    # @staticmethod
+    # def create_ingredients(ingredients, recipe):
+
     def create(self, validated_data):
         image = validated_data.pop('image')
         ingredients = validated_data.pop('ingredients')
@@ -108,19 +114,22 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             )
         return recipe
 
-    def update(self, instance, validated_data):
-        instance.ingredients.clear()
-        instance.tags.clear()
+    def update(self, recipe, validated_data):
+        recipe.ingredients.clear()
+        recipe.tags.clear()
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         for ingredient in ingredients:
-            RecipeIngredient.objects.get_or_create(
-                ingredient_id=ingredient['ingredient']['id'],
-                amount=ingredient['amount'],
-                recipe=instance
+            id = ingredient['id']
+            current_ingredient = get_object_or_404(Ingredient, id=id)
+            amount = ingredient['amount']
+            RecipeIngredient.objects.create(
+                recipe=recipe,
+                ingredient=current_ingredient,
+                amount=amount
             )
-        instance.tags.set(tags)
-        return super().update(instance, validated_data)
+        recipe.tags.set(tags)
+        return super().update(recipe, validated_data)
 
     def to_representation(self, recipe):
         data = RecipeGetSerializer(
