@@ -5,6 +5,19 @@ from users.models import CustomUser
 
 
 class Tag(models.Model):
+    BLUE = '#0000FF'
+    ORANGE = '#FFA500'
+    GREEN = '#008000'
+    PURPLE = '#800080'
+    YELLOW = '#FFFF00'
+
+    COLOR_CHOICES = [
+        (BLUE, 'Синий'),
+        (ORANGE, 'Оранжевый'),
+        (GREEN, 'Зеленый'),
+        (PURPLE, 'Фиолетовый'),
+        (YELLOW, 'Желтый'),
+    ]
     name = models.CharField(
         'Название',
         max_length=55,
@@ -17,7 +30,11 @@ class Tag(models.Model):
         blank=False,
         unique=True
     )
-    color = models.CharField('Цвет тега в HEX', max_length=7, default='#ffffff')
+    color = models.CharField('Цвет тега в HEX',
+                             max_length=7,
+                             unique=True,
+                             choices=COLOR_CHOICES
+                             )
 
     class Meta:
         verbose_name = 'Тег'
@@ -107,13 +124,12 @@ class Favorite(models.Model):
         CustomUser,
         on_delete=models.CASCADE,
         verbose_name='Пользователь',
-        related_name='favorite'
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         verbose_name='Рецепт',
-        related_name='favorite'
+        related_name='favorites'
     )
 
     class Meta:
