@@ -95,9 +95,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             )
         return value
 
-    # @staticmethod
-    # def create_ingredients(ingredients, recipe):
-
     def create(self, validated_data):
         image = validated_data.pop('image')
         ingredients = validated_data.pop('ingredients')
@@ -203,7 +200,8 @@ class SubscriptionSerializer(serializers.ModelSerializer, SubscribeMixin):
             queryset = queryset[:int(limit)]
         return RecipeListSerializer(queryset, many=True).data
 
-    def get_recipes_count(self, obj):
+    @staticmethod
+    def get_recipes_count(obj):
         return obj.author.recipes.count()
 
 
