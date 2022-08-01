@@ -1,3 +1,6 @@
+import csv
+
+from django.http.response import FileResponse
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
@@ -5,7 +8,7 @@ from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 
-from .models import Tag, Recipe, Favorite, Ingredient, ShoppingCart
+from .models import Tag, Recipe, Favorite, Ingredient, ShoppingCart, RecipeIngredient
 from .serializers import TagSerializer, IngredientSerializer, RecipeGetSerializer, RecipeCreateSerializer, FavoriteSerializer, ShoppingCartSerializer
 from .permissions import AuthorOrReadOnly, AdminOrReadOnly
 from .filters import IngredientSearchFilter, RecipeFilter
@@ -88,3 +91,32 @@ class RecipeViewSet(viewsets.ModelViewSet):
             ShoppingCart.objects.filter(user=user, recipe=recipe).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods=['GET'],
+            detail=False,
+            permission_classes=(IsAuthenticated,)
+            )
+    def download_shopping_cart(self, request):
+        user = request.user
+        recipes = user.recipes.all()
+        shopping_cart = {}
+        for recipe in recipes:
+            ingredients = RecipeIngredient.objects.filter(
+                recipe=recipe
+            ).all()
+            for ingredient in ingredients:
+                name = ingredient.ingredient.name
+                amount = ingredient.amount
+                if name not in shopping_cart.keys():
+                    shopping_cart[name] = amount
+                else:
+                    shopping_cart[name] += amount
+        with open('shopping_cart.txt', 'w+', encoding='utf-8') as file:
+            for ingredient, amount in shopping_cart.items():
+                measurement_unit = get_object_or_404(
+                    Ingredient, name=ingredient
+                ).measurement_unit
+                file.write(f'{ingredient} - {amount}  {measurement_unit}\n')
+        file = open('shopping_cart.txt', 'rb')
+        response = FileResponse(file, content_type='text/plain')
+        return response
