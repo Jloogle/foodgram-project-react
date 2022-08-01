@@ -1,7 +1,7 @@
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework import routers
 
-from .views import RecipeViewSet, TagViewSet, IngredientViewSet
+from .views import IngredientViewSet, RecipeViewSet, TagViewSet
 
 router = routers.SimpleRouter()
 router.register(r'recipes', RecipeViewSet, basename='recipes')

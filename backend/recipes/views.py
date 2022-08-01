@@ -1,18 +1,19 @@
-import csv
-
 from django.http.response import FileResponse
-from rest_framework import viewsets, status
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
-from .models import Tag, Recipe, Favorite, Ingredient, ShoppingCart, RecipeIngredient
-from .serializers import TagSerializer, IngredientSerializer, RecipeGetSerializer, RecipeCreateSerializer, FavoriteSerializer, ShoppingCartSerializer
-from .permissions import AuthorOrReadOnly, AdminOrReadOnly
-from .filters import IngredientSearchFilter, RecipeFilter
 from foodgram.pagination import LimitPageNumberPaginator
+from .filters import IngredientSearchFilter, RecipeFilter
+from .models import (Favorite, Ingredient, Recipe,
+                     RecipeIngredient, ShoppingCart, Tag)
+from .permissions import AdminOrReadOnly, AuthorOrReadOnly
+from .serializers import (
+    FavoriteSerializer, IngredientSerializer, RecipeCreateSerializer,
+    RecipeGetSerializer, ShoppingCartSerializer, TagSerializer)
 
 
 class TagViewSet(viewsets.ModelViewSet):

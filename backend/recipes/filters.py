@@ -1,7 +1,7 @@
 from django_filters import rest_framework as filters
 
-from .models import Ingredient, Recipe, Tag
 from users.models import CustomUser
+from .models import Ingredient, Recipe, Tag
 
 
 class IngredientSearchFilter(filters.FilterSet):
@@ -39,4 +39,3 @@ class RecipeFilter(filters.FilterSet):
     class Meta:
         model = Recipe
         fields = ('tags', 'author')
-

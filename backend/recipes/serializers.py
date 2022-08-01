@@ -1,12 +1,13 @@
-from rest_framework import serializers, exceptions
-from rest_framework.validators import UniqueTogetherValidator
 from django.shortcuts import get_object_or_404
 from drf_base64.fields import Base64ImageField
+from rest_framework import exceptions, serializers
+from rest_framework.validators import UniqueTogetherValidator
 
-from .models import Tag, Ingredient, RecipeIngredient, Recipe, Favorite, ShoppingCart
-from users.serializers import CustomUserSerializer
-from users.models import Follow
 from users.mixins import SubscribeMixin
+from users.models import Follow
+from users.serializers import CustomUserSerializer
+from .models import (Favorite, Ingredient, Recipe,
+                     RecipeIngredient, ShoppingCart, Tag)
 
 
 class TagSerializer(serializers.ModelSerializer):

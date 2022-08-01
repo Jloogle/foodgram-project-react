@@ -1,8 +1,9 @@
 from django.urls import include, path
-from rest_framework import routers
 from djoser.views import TokenDestroyView
+from rest_framework import routers
 
-from .views import CustomUserViewSet, CheckBlockAndTokenCreate
+from .views import CheckBlockAndTokenCreate, CustomUserViewSet
+
 
 router = routers.SimpleRouter()
 router.register(r'users', CustomUserViewSet, basename='users')
