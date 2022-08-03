@@ -1,7 +1,5 @@
 from rest_framework import exceptions
 
-from .models import RecipeIngredient
-
 
 def double_checker(item_list):
     """Проверяет элементы на повтор"""
@@ -15,17 +13,3 @@ def double_checker(item_list):
                 raise exceptions.ValidationError(
                     f'{element} уже есть в рецепте!'
                 )
-
-
-def create_ingredients(ingredients, recipe):
-    ingredient_list = []
-    for ingredient in ingredients:
-        ingredient_id = ingredient['id']
-        amount = ingredient['amount']
-        recipe_ingredient = RecipeIngredient(
-            recipe=recipe,
-            ingredient=ingredient_id,
-            amount=amount
-        )
-        ingredient_list.append(recipe_ingredient)
-    RecipeIngredient.objects.bulk_create(ingredient_list)
