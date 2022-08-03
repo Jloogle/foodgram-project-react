@@ -21,13 +21,11 @@ class Tag(models.Model):
     name = models.CharField(
         'Название',
         max_length=55,
-        blank=False,
         unique=True
     )
     slug = models.SlugField(
         'Слаг',
         max_length=55,
-        blank=False,
         unique=True
     )
     color = models.CharField('Цвет тега в HEX',
@@ -48,12 +46,10 @@ class Ingredient(models.Model):
     name = models.CharField(
         'Название ингредиента',
         max_length=100,
-        blank=False
     )
     measurement_unit = models.CharField(
         'Единица измерения',
         max_length=100,
-        blank=False
     )
 
     class Meta:
@@ -81,21 +77,18 @@ class Recipe(models.Model):
     name = models.CharField(
         'Название рецепта',
         max_length=250,
-        blank=False
     )
     image = models.ImageField(
         'Изображение блюда',
         upload_to='recipes/',
-        blank=True,
+        blank=True
     )
     text = models.TextField(
         'Описание',
         help_text='Введите описания рецепта',
-        blank=False
     )
     cooking_time = models.PositiveIntegerField(
         'Время приготовления',
-        blank=False
     )
     tags = models.ManyToManyField(
         Tag,
