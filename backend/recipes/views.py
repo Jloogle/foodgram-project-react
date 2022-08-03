@@ -111,9 +111,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
             recipe__shopping_cart__user=user
         ).values(
             'ingredient__name', 'ingredient__measurement_unit'
-        ).annotate(amount=Sum('amount')).values_list(
-            'ingredient__name', 'ingredient__measurement_unit', 'amount'
-        )
+        ).annotate(ingredient_sum=Sum('amount')).values_list(
+            'ingredient__name', 'ingredient__measurement_unit',
+            'ingredient_sum')
         content = ''
         for ingredient in ingredients:
             content += (
