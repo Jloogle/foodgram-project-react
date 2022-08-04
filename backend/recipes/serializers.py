@@ -127,7 +127,7 @@ class RecipeGetSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)
     image = Base64ImageField()
     ingredients = RecipeIngredientSerializer(
-        source='ingredientamount_set',
+        source='recipe_ingredient',
         many=True,
         read_only=True,)
     tags = TagSerializer(read_only=True, many=True)
