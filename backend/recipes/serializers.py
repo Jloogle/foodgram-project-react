@@ -58,6 +58,14 @@ class RecipeCreateIngredientSerializer(serializers.ModelSerializer):
         model = RecipeIngredient
         fields = ('id', 'amount')
 
+    @staticmethod
+    def validate_amount(value):
+        if value <= 0:
+            raise exceptions.ValidationError(
+                'Количество ингредиентов должно быть больше нуля!'
+            )
+        return value
+
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
     tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(),
@@ -86,12 +94,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         double_checker([tags, ingredients])
         return data
 
-    def validate_ingredients(self, ingredients):
-        for ingredient in ingredients:
-            if int(ingredient['amount']) <= 0:
-                raise exceptions.ValidationError(
-                    'Количество ингредиентов должно быть больше нуля!'
-                )
     @staticmethod
     def validate_cooking_time(value):
         if value <= 0:
