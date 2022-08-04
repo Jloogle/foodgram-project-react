@@ -1,7 +1,7 @@
 from django_filters import rest_framework as filters
 
 from users.models import CustomUser
-from .models import Ingredient, Recipe, Tag
+from .models import Ingredient, Recipe
 
 
 class IngredientSearchFilter(filters.FilterSet):
@@ -13,8 +13,7 @@ class IngredientSearchFilter(filters.FilterSet):
 
 
 class RecipeFilter(filters.FilterSet):
-    tags = filters.ModelMultipleChoiceFilter(
-        queryset=Tag.objects.all(),
+    tags = filters.AllValuesMultipleFilter(
         field_name='tags__slug',
         to_field_name='slug',
     )
