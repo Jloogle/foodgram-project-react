@@ -64,7 +64,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
 
     @staticmethod
-    def favorite_and_shopping_catd_delete(model, user, recipe):
+    def favorite_and_shopping_cart_delete(model, user, recipe):
         model.objects.filter(recipe=recipe, user=user).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -118,7 +118,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         for ingredient in ingredients:
             content += (
                 f'{ingredient[0]} '
-                f'{ingredient[2]}'
+                f'{ingredient[2]} '
                 f'- {ingredient[1]}\r\n'
             )
         response = HttpResponse(
