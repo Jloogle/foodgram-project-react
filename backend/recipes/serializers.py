@@ -118,11 +118,9 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         recipe.tags.set(tags)
         return super().update(recipe, validated_data)
 
-    def to_representation(self, recipe):
-        data = RecipeGetSerializer(
-            recipe,
-            context={'request': self.context.get('request')}).data
-        return data
+    def to_representation(self, value):
+        serializer = RecipeGetSerializer(value, context=self.context)
+        return serializer.data
 
 
 class RecipeGetSerializer(serializers.ModelSerializer):
