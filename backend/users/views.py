@@ -2,10 +2,10 @@ from django.shortcuts import get_object_or_404
 from djoser.views import TokenCreateView, UserViewSet
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
+from foodgram.pagination import LimitPageNumberPaginator
 from recipes.serializers import SubscriptionSerializer
 from .models import CustomUser, Follow
 from .serializers import CustomUserSerializer
@@ -15,7 +15,7 @@ class CustomUserViewSet(UserViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = (AllowAny, )
-    pagination_class = PageNumberPagination
+    pagination_class = LimitPageNumberPaginator
 
     @action(
         methods=['GET'],
