@@ -18,7 +18,7 @@ env = environ.Env(
 BASE_DIR = Path(__file__).resolve().parent.parent
 environ.Env.read_env()
 SECRET_KEY = env('SECRET_KEY')
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = env('ALLOWED_HOSTS')
 
 
