@@ -80,7 +80,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return self.favorite_and_shopping_cart_add(
                 Favorite, user, recipe)
         if request.method == 'DELETE':
-            return self.favorite_and_shopping_catd_delete(
+            return self.favorite_and_shopping_cart_delete(
                 Favorite, user, recipe)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -96,7 +96,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return self.favorite_and_shopping_cart_add(
                 ShoppingCart, user, recipe)
         if request.method == 'DELETE':
-            return self.favorite_and_shopping_catd_delete(
+            return self.favorite_and_shopping_cart_delete(
                 ShoppingCart, user, recipe)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
