@@ -163,3 +163,11 @@ sudo docker-compose exec web python createsuperuser
 ```
 http://localhost/api/docs/redoc.html
 ```
+
+###Посетить сайт можно по ссылке
+```
+http://130.193.41.25/recipes
+```
+
+Автор:   
+Живов Игорь - https://github.com/Jloogle
