@@ -72,12 +72,26 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ('id', 'ingredients', 'tags', 'author',
                   'name', 'text', 'cooking_time', 'image')
+        validators = [
+            serializers.UniqueTogetherValidator(
+                queryset=Recipe.objects.all(),
+                fields=('name', 'text'),
+                message='Такой рецепт уже существует'
+            )
+        ]
 
     def validate(self, data):
         ingredients = data['ingredients']
         tags = data['tags']
         double_checker([tags, ingredients])
         return data
+
+    @staticmethod
+    def validate_ingredients(value):
+        if value <= 0:
+            raise exceptions.ValidationError(
+                'Количество ингредиентов должно быть больше нуля'
+            )
 
     @staticmethod
     def validate_cooking_time(value):
