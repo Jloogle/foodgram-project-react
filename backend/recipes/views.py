@@ -70,7 +70,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         model.objects.filter(recipe=recipe, user=user).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(methods=['POST', 'DELETE'], detail=True)
+    @action(
+        methods=['POST', 'DELETE'],
+        detail=True,
+        filter_backends=DjangoFilterBackend,
+        filterset_class=RecipeFilter
+    )
     def favorite(self, request, pk):
         user = request.user
         recipe = get_object_or_404(Recipe, pk=pk)

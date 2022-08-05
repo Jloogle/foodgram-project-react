@@ -29,7 +29,7 @@ class RecipeFilter(filters.FilterSet):
         return recipes
 
     def shopping_cart_filter(self, queryset, name, value):
-        recipes = Recipe.objects.filter(shopping_lists__user=self.request.user)
+        recipes = Recipe.objects.filter(shopping_cart__user=self.request.user)
         return recipes
 
     class Meta:
