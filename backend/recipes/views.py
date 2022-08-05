@@ -37,13 +37,13 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (AuthorOrReadOnly,)
-    default_serializer_class = RecipeCreateSerializer
+    serializer_class = RecipeGetSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
     pagination_class = LimitPageNumberPaginator
 
     def get_serializer_class(self):
-        if self.request.method in ('GET',):
+        if self.action in ['list', 'retrieve']:
             return RecipeGetSerializer
         return RecipeCreateSerializer
 
@@ -70,12 +70,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         model.objects.filter(recipe=recipe, user=user).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(
-        methods=['POST', 'DELETE'],
-        detail=True,
-        permission_classes=(IsAuthenticated,)
-    )
-    def favorite(self, request, pk=None):
+    @action(methods=['POST', 'DELETE'], detail=True)
+    def favorite(self, request, pk):
         user = request.user
         recipe = get_object_or_404(Recipe, pk=pk)
         if request.method == 'POST':
