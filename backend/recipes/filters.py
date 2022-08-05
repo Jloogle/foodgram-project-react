@@ -12,24 +12,26 @@ class IngredientSearchFilter(filters.FilterSet):
 
 
 class RecipeFilter(filters.FilterSet):
-    tags = filters.AllValuesMultipleFilter(field_name='tags__slug')
+    """Фильтрует рецепты по избранному, списку покупок,
+    и тэгам"""
     is_favorited = filters.BooleanFilter(
         field_name='is_favorited',
-        method='get_is_favorited',
+        method='favorite_filter'
     )
     is_in_shopping_cart = filters.BooleanFilter(
         field_name='is_in_shopping_cart',
-        method='get_is_in_shopping_cart',
+        method='shopping_cart_filter'
     )
+    tags = filters.AllValuesMultipleFilter(field_name='tags__slug')
 
-    def get_is_favorited(self, queryset, name, value):
+    def favorite_filter(self, queryset, name, value):
         recipes = Recipe.objects.filter(favorites__user=self.request.user)
         return recipes
 
-    def get_is_in_shopping_cart(self, queryset, name, value):
-        recipes = Recipe.objects.filter(shopping_cart__user=self.request.user)
+    def shopping_cart_filter(self, queryset, name, value):
+        recipes = Recipe.objects.filter(shopping_lists__user=self.request.user)
         return recipes
 
     class Meta:
         model = Recipe
-        fields = ('author',)
+        fields = ['author']
