@@ -11,6 +11,7 @@ from .utils import double_checker
 
 
 class TagSerializer(serializers.ModelSerializer):
+    """Сериализатор для тегов рецептов"""
     slug = serializers.SlugField()
 
     class Meta:
@@ -20,12 +21,14 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
+    """Сериализатор ингредиентов"""
     class Meta:
         model = Ingredient
         fields = ('id', 'name', 'measurement_unit')
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
+    """Сериализатор для вывода ингредиентов рецепта"""
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all(),
         source='ingredient.id'
@@ -51,6 +54,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeCreateIngredientSerializer(serializers.ModelSerializer):
+    """Сериализотор для создания ингредиентов рецепта"""
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
     amount = serializers.IntegerField()
 
@@ -68,6 +72,7 @@ class RecipeCreateIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
+    """Сериализатор для создания рецептов"""
     tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(),
                                               many=True)
     author = CustomUserSerializer(read_only=True)
@@ -139,6 +144,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
 
 class RecipeGetSerializer(serializers.ModelSerializer):
+    """Сериализатор для вывода рецептов"""
     author = CustomUserSerializer(read_only=True)
     image = Base64ImageField()
     ingredients = RecipeIngredientSerializer(
@@ -169,6 +175,7 @@ class RecipeGetSerializer(serializers.ModelSerializer):
 
 
 class RecipeListSerializer(serializers.ModelSerializer):
+    """Сериализатор для краткого вывода информации о рецепте в подписках"""
     image = Base64ImageField()
 
     class Meta:
@@ -178,6 +185,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionSerializer(serializers.ModelSerializer, SubscribeMixin):
+    """Сериализатор подписок"""
     id = serializers.ReadOnlyField(source='author.id')
     email = serializers.ReadOnlyField(source='author.email')
     username = serializers.ReadOnlyField(source='author.username')
@@ -206,6 +214,7 @@ class SubscriptionSerializer(serializers.ModelSerializer, SubscribeMixin):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
+    """Сериализатор избранного"""
     id = serializers.CharField(read_only=True, source='recipe.id')
     cooking_time = serializers.CharField(read_only=True,
                                          source='recipe.cooking_time')
@@ -227,6 +236,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
+    """ Сериализатор для списка покупок"""
     id = serializers.CharField(read_only=True, source='recipe.id')
     cooking_time = serializers.CharField(read_only=True,
                                          source='recipe.cooking_time')

@@ -6,6 +6,7 @@ from users.models import CustomUser
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
+    """Сериализатор создания пользователя"""
     class Meta:
         model = CustomUser
         fields = (
@@ -17,6 +18,7 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
 
 class CustomUserSerializer(UserSerializer, SubscribeMixin):
+    """Сериализатор пользователя"""
     is_subscribed = serializers.SerializerMethodField(read_only=True)
 
     class Meta:

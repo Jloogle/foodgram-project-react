@@ -12,6 +12,7 @@ from .serializers import CustomUserSerializer
 
 
 class CustomUserViewSet(UserViewSet):
+    """ВьюСет пользователя"""
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = (AllowAny, )
@@ -73,6 +74,7 @@ class CustomUserViewSet(UserViewSet):
 
 
 class CheckBlockAndTokenCreate(TokenCreateView):
+    """Вью для проверки пользователя на блокировку"""
     def _action(self, serializer):
         if serializer.user.is_block:
             return Response(
