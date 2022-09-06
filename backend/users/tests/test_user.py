@@ -1,11 +1,13 @@
+from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 
 from users.models import CustomUser
+from users.views import CustomUserViewSet
 
 
 class UserTests(APITestCase):
-    def test_create_user(self):
+    def test_create_delete_user(self):
         """тест создания юзера"""
         url = 'http://127.0.0.1:8000/api/users/'
         data = {
@@ -19,4 +21,14 @@ class UserTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(CustomUser.objects.count(), 1)
         self.assertEqual(CustomUser.objects.get().username, 'LoraFirst')
+
+        # user = CustomUser.objects.get(username='LoraFirst')
+        # self.client.force_login(user)
+        # response = self.client.delete(url + 'me/', )
+        # print(response)
+        # self.assertEqual(response.status_code, status.)
+
+
+    # def test_subscribe(self):
+    #     url = 'http://127.0.0.1:8000/api/users/1/subscribe/'
 
